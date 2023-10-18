@@ -17,7 +17,7 @@
             android:layout_height="105dp"
             android:layout_weight="2"
             android:text=""
-            />
+            tools:ignore="DuplicateIds" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -44,17 +44,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/button_next"/>
+
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_weight="2"
-            android:text="liczba poprawnych odpowiedzi: "
-            />
-        <TextView
+            android:padding="30dp"
+            android:textFontWeight="@integer/material_motion_duration_long_2"
+            android:textColor="@color/purple_500"
             android:id="@+id/trueAnswerCounter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center"
         />
 
     </LinearLayout>

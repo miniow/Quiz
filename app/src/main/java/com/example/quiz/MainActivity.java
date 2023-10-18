@@ -50,28 +50,35 @@ public class MainActivity extends AppCompatActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-                currentIndex = (currentIndex+1)%questions.length;
                 setNextQuestion();
             }
         });
-
-
+        setNextQuestion();
     }
     public void setNextQuestion(){
+        currentIndex = (currentIndex+1)%questions.length;
         questionTextView.setText(questions[currentIndex].getQuestionId());
     }
     public void checkAnswerCorrectness(boolean userAnswer){
-        boolean correctAnswer = questions[currentIndex].isTrueAnswer();
+
         int resultMessageId =0;
-        if (userAnswer ==correctAnswer)
+        if (userAnswer == questions[currentIndex].isTrueAnswer())
         {
             resultMessageId = R.string.correct_answer;
             counter++;
         } else {
             resultMessageId = R.string.incorrect_answer;
         }
-        trueAnswerCounter.setText(counter);
-        Toast.makeText(this, resultMessageId, Toast.LENGTH_SHORT).show();
 
+        Toast.makeText(this, resultMessageId, Toast.LENGTH_SHORT).show();
+        if(currentIndex==0)
+        {
+            String naps = "liczba poprawnych odpowiedzi: ";
+            naps = naps + Integer.toString(counter);
+            trueAnswerCounter.setText(naps);
+        }
+
+
+        setNextQuestion();
     }
 }
