@@ -14,9 +14,10 @@
         <TextView
             android:id="@+id/question_text_view"
             android:layout_width="match_parent"
-            android:layout_height="105dp"
+            android:layout_height="80dp"
             android:layout_weight="2"
             android:text=""
+            android:gravity="center"
             tools:ignore="DuplicateIds" />
 
         <LinearLayout
@@ -43,7 +44,7 @@
             android:id="@+id/button_next"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/button_next"/>
+            android:text="@string/button_reset"/>
 
         <TextView
             android:padding="30dp"
