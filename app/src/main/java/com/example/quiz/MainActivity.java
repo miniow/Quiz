@@ -1,37 +1,46 @@
 package com.example.quiz;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-
+    private static final String KEY_CURRENT_INDEX = "currentIndex";
+    private static final String KEY_COUNTER = "counter";
     private Button trueButton;
     private Button falseButton;
-    private Button nextButton;
+    private Button resetButton;
     private TextView questionTextView;
-    private Question[] questions = new Question[]{
+    private TextView trueAnswerCounter;
+    private int counter=0;
+    private int currentIndex =0;
+    private final Question[] questions = new Question[]{
             new Question(R.string.q_activity, true),
             new Question(R.string.q_find_resources,  false),
             new Question(R.string.q_listener, true),
             new Question(R.string.q_resources, true),
             new Question(R.string.q_version,  false),
     };
-    private int currentIndex =0;
-    private TextView trueAnswerCounter;
-    private int counter=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("mojTag","metoda onCreate() została wywołana");
+
+        if(savedInstanceState != null){
+            currentIndex =savedInstanceState.getInt(KEY_CURRENT_INDEX);
+            counter = savedInstanceState.getInt(KEY_COUNTER);
+        }
+
         setContentView(R.layout.activity_main);
         trueButton= findViewById(R.id.button_true);
         falseButton= findViewById(R.id.button_false);
-        nextButton = findViewById(R.id.button_next);
+        resetButton = findViewById(R.id.button_next);
         questionTextView = findViewById(R.id.question_text_view);
         trueAnswerCounter = findViewById(R.id.trueAnswerCounter);
 
@@ -47,13 +56,55 @@ public class MainActivity extends AppCompatActivity {
                 checkAnswerCorrectness(false);
             }
         });
-        nextButton.setOnClickListener(new View.OnClickListener() {
+        resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-                setNextQuestion();
+                reset();
             }
         });
-        setNextQuestion();
+        setQuestionTextView();
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("mojTag","metoda onStart() została wywołana");
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("mojTag","metoda onResume() została wywołana");
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("mojTag","metoda onPause() została wywołana");
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("mojTag","metoda onStop() została wywołana");
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("mojTag","metoda onDestroy() została wywołana");
+    }
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d("mojTag", "metoda onSaveInstanceState() została wywołana");
+        outState.putInt(KEY_CURRENT_INDEX,currentIndex);
+        outState.putInt(KEY_COUNTER,counter);
+    }
+
+    public void reset(){
+        counter=0;
+        currentIndex=0;
+        setQuestionTextView();
+        trueAnswerCounter.setText("");
+    }
+    public  void setQuestionTextView(){
+        questionTextView.setText(questions[currentIndex].getQuestionId());
     }
     public void setNextQuestion(){
         currentIndex = (currentIndex+1)%questions.length;
@@ -71,14 +122,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Toast.makeText(this, resultMessageId, Toast.LENGTH_SHORT).show();
-        if(currentIndex==0)
+        if(currentIndex==questions.length-1)
         {
             String naps = "liczba poprawnych odpowiedzi: ";
             naps = naps + Integer.toString(counter);
             trueAnswerCounter.setText(naps);
         }
-
-
         setNextQuestion();
     }
 }

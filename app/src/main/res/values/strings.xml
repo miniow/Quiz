@@ -2,7 +2,7 @@
     <string name="app_name">Quiz</string>
     <string name="button_true">Prawda</string>
     <string name="button_false">Fałsz</string>
-    <string name="button_next">Następne</string>
+    <string name="button_reset">Reset</string>
 
     <string name="correct_answer">Dobrze</string>
     <string name="incorrect_answer">Źle</string>
