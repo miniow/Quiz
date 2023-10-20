@@ -1,8 +1,11 @@
 package com.example.quiz;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,11 +14,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
+    public static final String KEY_EXTRA_ANSWER = "com.example.quiz.correctAnswer";
     private static final String KEY_CURRENT_INDEX = "currentIndex";
     private static final String KEY_COUNTER = "counter";
+    private static final int REQUEST_CODE_PROMPT = 0;
     private Button trueButton;
     private Button falseButton;
     private Button resetButton;
+    private Button hintButton;
     private TextView questionTextView;
     private TextView trueAnswerCounter;
     private int counter=0;
@@ -27,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
             new Question(R.string.q_resources, true),
             new Question(R.string.q_version,  false),
     };
+    private boolean answerWasShown;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,10 +51,12 @@ public class MainActivity extends AppCompatActivity {
         resetButton = findViewById(R.id.button_next);
         questionTextView = findViewById(R.id.question_text_view);
         trueAnswerCounter = findViewById(R.id.trueAnswerCounter);
+        hintButton = findViewById(R.id.button_hint);
 
         trueButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v)
+            {
                 checkAnswerCorrectness(true);
             }
         });
@@ -59,11 +69,19 @@ public class MainActivity extends AppCompatActivity {
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-                reset();
+                answerWasShown = false;
+                setQuestionTextView();
             }
         });
+        hintButton.setOnClickListener((v)-> {
+            Intent intent = new Intent(MainActivity.this, PromptActivity.class);
+            boolean correctAnswer = questions[currentIndex].isTrueAnswer();
+            intent.putExtra(KEY_EXTRA_ANSWER, correctAnswer);
+            startActivityForResult(intent, REQUEST_CODE_PROMPT,null);
+        } );
         setQuestionTextView();
     }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -97,6 +115,19 @@ public class MainActivity extends AppCompatActivity {
         outState.putInt(KEY_COUNTER,counter);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode != RESULT_OK){return;}
+        if(requestCode == REQUEST_CODE_PROMPT)
+        {
+            if(data == null){
+                return;
+            }
+            answerWasShown = data.getBooleanExtra(PromptActivity.KEY_EXTRA_ANSWER_SHOWN,false);
+        }
+    }
+
     public void reset(){
         counter=0;
         currentIndex=0;
@@ -111,16 +142,19 @@ public class MainActivity extends AppCompatActivity {
         questionTextView.setText(questions[currentIndex].getQuestionId());
     }
     public void checkAnswerCorrectness(boolean userAnswer){
-
+        boolean correctAnswer = questions[currentIndex].isTrueAnswer();
         int resultMessageId =0;
-        if (userAnswer == questions[currentIndex].isTrueAnswer())
-        {
-            resultMessageId = R.string.correct_answer;
-            counter++;
-        } else {
-            resultMessageId = R.string.incorrect_answer;
+        if(answerWasShown) {
+            resultMessageId=R.string.answear_was_shown;
         }
-
+        else {
+            if (userAnswer == correctAnswer) {
+                resultMessageId = R.string.correct_answer;
+                counter++;
+            } else {
+                resultMessageId = R.string.incorrect_answer;
+            }
+        }
         Toast.makeText(this, resultMessageId, Toast.LENGTH_SHORT).show();
         if(currentIndex==questions.length-1)
         {
@@ -128,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
             naps = naps + Integer.toString(counter);
             trueAnswerCounter.setText(naps);
         }
+        answerWasShown=false;
         setNextQuestion();
     }
 }

@@ -45,7 +45,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/button_reset"/>
-
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/button_show_hint"
+            android:id="@+id/button_hint"
+            />
         <TextView
             android:padding="30dp"
             android:textFontWeight="@integer/material_motion_duration_long_2"
@@ -57,6 +62,8 @@
             android:textStyle="bold"
             android:gravity="center"
         />
+
+
 
     </LinearLayout>
 
